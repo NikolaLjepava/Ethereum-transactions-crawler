@@ -1,0 +1,32 @@
+{
+  "name": "ethereum-transactions-crawler",
+  "version": "1.0.0",
+  "description": "A web application that displays ethereum transactions from a certain wallet in a certain block",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NikolaLjepava"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "transactions",
+    "wallet"
+  ],
+  "author": "Nikola Ljepava",
+  "license": "ISC",
+  "dependencies": {
+    "alchemy-sdk": "^3.6.5",
+    "axios": "^1.13.3",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0"
+  }
+}
