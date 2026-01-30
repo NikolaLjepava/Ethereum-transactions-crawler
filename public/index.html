@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ethereum Transaction Crawler</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    /* Add basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Ethereum Transaction Crawler</h1>
+    
+    <form @submit.prevent="fetchTransactions">
+      <input v-model="address" placeholder="Wallet address (0x...)" />
+      <input v-model="startBlock" placeholder="Start block (default: 0)" />
+      <button type="submit">Fetch Transactions</button>
+    </form>
+    
+    <div v-if="loading">Loading...</div>
+    <div v-if="error" class="error">{{ error }}</div>
+    
+    <table v-if="transfers.length > 0">
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>To</th>
+          <th>Amount</th>
+          <th>Asset</th>
+          <th>Block</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="transfer in transfers" :key="transfer.hash">
+          <td>{{ transfer.fromAddress }}</td>
+          <td>{{ transfer.toAddress }}</td>
+          <td>{{ transfer.value }}</td>
+          <td>{{ transfer.asset }}</td>
+          <td>{{ transfer.blockNum }}</td>
+          <td>{{ transfer.category }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    const { createApp, ref } = Vue;
+    
+    createApp({
+      setup() {
+        const address = ref('');
+        const startBlock = ref('0');
+        const transfers = ref([]);
+        const loading = ref(false);
+        const error = ref('');
+        
+        async function fetchTransactions() {
+  loading.value = true;
+  error.value = '';
+  transfers.value = [];
+  
+  try {
+    const url = `/api/transactions?address=${encodeURIComponent(address.value)}&startBlock=${startBlock.value}`;
+    console.log('Fetching from:', url);
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    console.log('API Response:', data);
+    
+    if (data.success) {
+      transfers.value = data.transfers || [];
+      console.log(`Loaded ${transfers.value.length} transactions`);
+    } else {
+      error.value = data.error || 'Unknown error';
+    }
+    
+  } catch (err) {
+    error.value = 'Network error: ' + (err.message || 'Check console');
+    console.error('Error:', err);
+  } finally {
+    loading.value = false;
+  }
+}
+        
+        return { address, startBlock, transfers, loading, error, fetchTransactions };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
