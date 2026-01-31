@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      # Note: ALCHEMY_API_KEY should be passed at runtime
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    # Development mode with hot reload
+    command: npm run dev

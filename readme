@@ -1,3 +1,49 @@
-test wallet with low activity: 0x5c43B1eD97e52d009611D89b74fA829FE4ac56b1
-block: 16000000
+# Ethereum Transaction Crawler
 
+A web application that allows users to view Ethereum transaction data for any wallet address, starting from a specific block number.
+
+## Features
+
+- View all transactions (ETH and tokens) for any Ethereum wallet
+- Paginated results for better performance on large wallets
+- Historical ETH balance lookup by date
+- Simple web interface
+- REST API for programmatic access
+- Support for ETH, ERC20, ERC721, and ERC1155 tokens
+
+## Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Alchemy API key (free)
+
+## Instructions
+
+1. **Clone the repository**
+2. **npm install**
+3. **Set up .env file with following contents:**
+   -ALCHEMY_API_KEY=your_alchemy_api_key_here
+   -PORT=3000
+   Get a free Alchemy API key from alchemy.com
+4. **Type in terminal npx ts-node src/server.ts**
+5. **Visit http://localhost:3000/**
+
+## Docker Setup (Optional)
+
+This project includes Docker configuration for easy setup. Docker packages the application and its dependencies into a container, ensuring it runs consistently on any system.
+
+### Prerequisites
+
+- Install [Docker](https://docs.docker.com/get-docker/)
+- Install [Docker Compose](https://docs.docker.com/compose/install/) (optional but recommended)
+
+### Quick Start with Docker
+
+1. **Create environment file:**
+
+   ```bash
+   echo "ALCHEMY_API_KEY=your_key_here" > .env
+
+   build and run with this command in terminal: docker-compose up --build
+   visit http://localhost:3000/
+   ```

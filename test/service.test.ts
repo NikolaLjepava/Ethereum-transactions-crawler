@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, beforeEach } from '@jest/globals';
 global.fetch = jest.fn();
 import { BlockchainService } from '../src/services/service';
 
@@ -69,4 +69,97 @@ describe('BlockchainService', () => {
   });
 });
   });
+  describe('getEthereumBalanceForDate', () => {
+  it('should get ETH balance for a date', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          status: "1",
+          result: "16000000"
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          result: "1000000000000000000"
+        })
+      });
+    
+    const balance = await service.getEthereumBalanceForDate(
+      '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      '2023-01-01'
+    );
+    
+    expect(balance).toBe('1.00000000 ETH');
+  });
+  
+  it('should throw error for invalid date format', async () => {
+    await expect(
+      service.getEthereumBalanceForDate(
+        '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+        'invalid-date'
+      )
+    ).rejects.toThrow('Invalid date format');
+  });
+  
+  it('should throw error for invalid address', async () => {
+    await expect(
+      service.getEthereumBalanceForDate('invalid', '2023-01-01')
+    ).rejects.toThrow('Invalid Ethereum address');
+  });
+});
+describe('getWalletHistoryPaginated', () => {
+  it('should paginate results correctly', async () => {
+    const mockTransfers = Array.from({ length: 15 }, (_, i) => ({
+      fromAddress: `0x${i}`,
+      toAddress: `0x${i + 1}`,
+      blockNum: 16000000 + i,
+      category: 'external',
+      value: '1.000000',
+      asset: 'ETH',
+      hash: `0xhash${i}`
+    }));
+    
+    jest.spyOn(service, 'getWalletHistory').mockResolvedValue(mockTransfers);
+    
+    const page1 = await service.getWalletHistoryPaginated(
+      '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      16000000,
+      5,
+      0
+    );
+    
+    expect(page1.transfers).toHaveLength(5);
+    expect(page1.hasMore).toBe(true);
+    expect(page1.total).toBe(15);
+    expect(page1.transfers[0].blockNum).toBe(16000000);
+    
+    const page3 = await service.getWalletHistoryPaginated(
+      '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      16000000,
+      5,
+      10
+    );
+    
+    expect(page3.transfers).toHaveLength(5);
+    expect(page3.hasMore).toBe(false);
+    expect(page3.transfers[0].blockNum).toBe(16000010);
+  });
+  
+  it('should handle empty results', async () => {
+    jest.spyOn(service, 'getWalletHistory').mockResolvedValue([]);
+    
+    const result = await service.getWalletHistoryPaginated(
+      '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      16000000,
+      10,
+      0
+    );
+    
+    expect(result.transfers).toHaveLength(0);
+    expect(result.hasMore).toBe(false);
+    expect(result.total).toBe(0);
+  });
+});
 });
