@@ -17,6 +17,18 @@ A web application that allows users to view Ethereum transaction data for any wa
 - npm or yarn
 - Alchemy API key (free)
 
+### Getting an Alchemy API Key
+
+1. **Sign up** at https://www.alchemy.com/ (free)
+2. **Create a new app** with these settings:
+   - **Chain**: `Ethereum`
+   - **Network**: `Mainnet`
+3. **Copy your API key** from the dashboard (upper right corner there is a field that contains the api key as well)
+4. **Add it to `.env` file**:
+   ```env
+   ALCHEMY_API_KEY=your_key_here
+   ```
+
 ## Instructions
 
 1. **Clone the repository**
@@ -24,7 +36,6 @@ A web application that allows users to view Ethereum transaction data for any wa
 3. **Set up .env file with following contents:**
    -ALCHEMY_API_KEY=your_alchemy_api_key_here
    -PORT=3000
-   Get a free Alchemy API key from alchemy.com
 4. **Type in terminal npx ts-node src/server.ts**
 5. **Visit http://localhost:3000/**
 
